@@ -17,11 +17,12 @@ Jeweler::Tasks.new do |gem|
   gem.name = "netid-tools"
   gem.homepage = "http://github.com/allynfolksjr/netid-tools"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Gem with various methods to support UW NetIDs}
+  gem.description = %Q{Gem with various methods to support UW NetIDs}
   gem.email = "nikky@uw.edu"
   gem.authors = ["Nikky Southerland"]
-  # dependencies defined in Gemfile
+  gem.add_dependency 'nokogiri'
+ # gem.add_dependency 'colored'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
@@ -30,14 +31,6 @@ Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
-end
-
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-  test.rcov_opts << '--exclude "gems/*"'
 end
 
 task :default => :test
