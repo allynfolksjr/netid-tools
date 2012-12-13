@@ -5,6 +5,10 @@ NetID Tools is a Ruby Gem that contains various methods for supporting Uniform A
 
 Currently the focus is on finding and displaying information on any MySQL database server(s) that users may be running, as well as highlight potential quota issues. 
 
+## Installing
+
+	gem install netid-tools
+
 ## Usage Notes
 
 * Using keybased SSH authentication is highly recommended, both from your system->UA, and for UA->UA.
