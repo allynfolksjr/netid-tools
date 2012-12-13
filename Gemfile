@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem "nokogiri"
-
+gem "colored"
 group :development do
   gem "shoulda", ">= 0"
   gem "rdoc", "~> 3.12"

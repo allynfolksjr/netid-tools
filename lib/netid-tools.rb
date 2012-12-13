@@ -41,7 +41,6 @@ class Netid
 
   def self.quota_check(user,system_user)
     host = 'ovid02.u.washington.edu'
-    output = "\n"
     Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
       result = ssh.exec!("quota #{user}").chomp
       # Split along newlines
@@ -52,23 +51,22 @@ class Netid
       result.each_with_index do |line,index|
         # The first two are headers: print and ignore
         if index == 0 || index == 1
-          output << line
+          puts line
           next
         end
         # Break the line up into elements
         line_components = line.squeeze(" ").split(" ")
         # Check to see if usage is over quota
         if line_components[1].to_f > line_components[2].to_f
-          output << "#{line.bold.red}\n"
+          puts "#{line.bold.red}"
           # If there's a grace period, it shows up in [4], so we account for that
           # and flag if its present
         elsif line_components[4] =~ /day/i || line_components[4].to_i > line_components[5].to_i
-          output << line.bold.red+'\n'
+          puts line.bold.red+'\n'
         else
-          output << line+'\n'
+          puts line
         end
       end
     end
-    output
   end
 end

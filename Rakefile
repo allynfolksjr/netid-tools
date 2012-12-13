@@ -16,13 +16,13 @@ Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "netid-tools"
   gem.homepage = "http://github.com/allynfolksjr/netid-tools"
-  gem.license = "MIT"
+  gem.license = "Apache License, Version 2.0"
   gem.summary = %Q{Gem with various methods to support UW NetIDs}
   gem.description = %Q{Gem with various methods to support UW NetIDs}
   gem.email = "nikky@uw.edu"
   gem.authors = ["Nikky Southerland"]
   gem.add_dependency 'nokogiri'
- # gem.add_dependency 'colored'
+  gem.add_dependency 'colored'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
