@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "netid-tools"
-  s.version = "0.3.2"
+  s.version = "0.3.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nikky Southerland"]
-  s.date = "2012-12-13"
+  s.date = "2012-12-21"
   s.description = "Gem with various methods to support UW NetIDs"
   s.email = "nikky@uw.edu"
   s.executables = ["ua_check"]
