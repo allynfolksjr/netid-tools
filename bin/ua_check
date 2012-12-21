@@ -48,8 +48,15 @@ hosts.each do |host|
   end
 end
 
+result = Netid.check_for_localhome(user,system_user)
+if result
+  puts "Localhome: #{result}".cyan
+else
+  puts "No localhome detected"
+end
+
 puts "No MySQLds Detected".bold.blue if results == 0
-puts "Multiple MySQLds Detected!".bold.red if results > 1
-puts Netid.check_for_localhome(user,system_user).cyan if results > 0
+#uts "Multiple MySQLds Detected!".bold.red if results > 1
+#puts Netid.check_for_localhome(user,system_user).cyan if results > 0
 puts "\n"
 Netid.quota_check(user,system_user)

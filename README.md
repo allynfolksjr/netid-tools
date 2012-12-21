@@ -129,6 +129,13 @@ The NetID you want to check
 
 Version History
 ===============
+## 0.3.3
+
+* Fix broken code so that it properly displays localhome
+
+## 0.3.2
+
+* Added install notes
 
 ## 0.3.1
 
