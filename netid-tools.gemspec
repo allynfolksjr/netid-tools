@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "netid-tools"
-  s.version = "0.3.3"
+  s.version = "0.3.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nikky Southerland"]
-  s.date = "2012-12-21"
+  s.date = "2013-01-16"
   s.description = "Gem with various methods to support UW NetIDs"
   s.email = "nikky@uw.edu"
   s.executables = ["ua_check"]
@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/allynfolksjr/netid-tools"
   s.licenses = ["Apache License, Version 2.0"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.24"
+  s.rubygems_version = "1.8.23"
   s.summary = "Gem with various methods to support UW NetIDs"
 
   if s.respond_to? :specification_version then
@@ -42,6 +42,7 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<nokogiri>, [">= 0"])
       s.add_runtime_dependency(%q<colored>, [">= 0"])
+      s.add_runtime_dependency(%q<net-ssh>, [">= 0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_development_dependency(%q<bundler>, [">= 0"])
@@ -52,6 +53,7 @@ Gem::Specification.new do |s|
     else
       s.add_dependency(%q<nokogiri>, [">= 0"])
       s.add_dependency(%q<colored>, [">= 0"])
+      s.add_dependency(%q<net-ssh>, [">= 0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<bundler>, [">= 0"])
@@ -63,6 +65,7 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<nokogiri>, [">= 0"])
     s.add_dependency(%q<colored>, [">= 0"])
+    s.add_dependency(%q<net-ssh>, [">= 0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
     s.add_dependency(%q<bundler>, [">= 0"])
