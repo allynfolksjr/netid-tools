@@ -2,6 +2,7 @@ source "http://rubygems.org"
 
 gem "nokogiri"
 gem "colored"
+gem "net-ssh"
 group :development do
   gem "shoulda", ">= 0"
   gem "rdoc", "~> 3.12"
