@@ -12,6 +12,7 @@ Currently the focus is on finding and displaying information on any MySQL databa
 ## Usage Notes
 
 * Using keybased SSH authentication is highly recommended, both from your system->UA, and for UA->UA.
+** To accomplish this, copy the contents of your ~/.ssh/id_rsa.pub to your ~/.ssh/authorized_keys
 * You may need membership of certain Unix Groups in order to run some of these checks.
 
 ## Dependencies
