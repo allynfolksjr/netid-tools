@@ -130,7 +130,7 @@ The NetID you want to check
 
 Version History
 ===============
-## 0.3.4
+## 0.3.6
 
 * Add concise mode via -c flag to ua_check (skips quota results)
 * Add OptionParser to ua_check
