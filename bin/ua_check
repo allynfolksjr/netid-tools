@@ -2,6 +2,20 @@
 require 'net/ssh'
 require 'colored'
 require 'netid-tools'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: ua_check [options]"
+
+
+  opts.on("-c", "--concise", "Concise Results") do |c|
+    options[:concise] = c
+  end
+  opts.on("-d", "--debug", "Run in debug (verbosely)") do |d|
+    options[:debug] = d
+  end
+end.parse!
 
 # This is a simple script that will go through various hosts and check to see
 # if a specified user is running MySQLd
@@ -20,43 +34,49 @@ require 'netid-tools'
 
 # Set up initial variables
 $results = 0
-raise "No user specified. Bailing." if ARGV[0].nil?
-user = ARGV[0].chomp.downcase
-raise "This is not a valid NetID!" unless Netid.validate_netid?(user)
+raise "No NetID(s) specified. Bailing." if ARGV.empty?
+user = ARGV.map{|n| n.downcase}
+user.each do |netid|
+  raise "#{netid} is not a valid NetID! Exiting." unless Netid.validate_netid?(netid)
+end
 # get the user of whoever is running script
 system_user = `whoami`.chomp
 system_hostname = `hostname`.chomp
 # Initialize the systems we'll check
 hosts = [ "ovid01.u.washington.edu",
-          "ovid02.u.washington.edu",
-          "ovid03.u.washington.edu",
-          "ovid21.u.washington.edu",
-          "vergil.u.washington.edu"
-          ]
+  "ovid02.u.washington.edu",
+  "ovid03.u.washington.edu",
+  "ovid21.u.washington.edu",
+  "vergil.u.washington.edu"
+]
 
+puts "Running UA Check for on behalf of #{system_user}\n".green
 
-
-puts "Running UA Check for NetID #{user} on behalf of #{system_user}\n".green
-
-
-results = 0
-hosts.each do |host|
-  result = Netid.check_for_mysql_presence(host,user,system_user)
-  if result
-    results += 1
-    puts "MySQLd detected on #{result[0]}:#{result[1]}".blue
+user.each do |netid|
+  puts "#{netid}".bold.green
+  puts "-"*netid.length
+  results = 0
+  hosts.each do |host|
+    result = Netid.check_for_mysql_presence(host,netid,system_user)
+    if result
+      results += 1
+      puts "MySQLd detected on #{result[0]}:#{result[1]}".blue
+    end
   end
-end
 
-result = Netid.check_for_localhome(user,system_user)
-if result
-  puts "Localhome: #{result}".cyan
-else
-  puts "No localhome detected"
-end
+  result = Netid.check_for_localhome(netid,system_user)
+  if result
+    puts "Localhome: #{result}".cyan
+  else
+    puts "No localhome detected"
+  end
 
-puts "No MySQLds Detected".bold.blue if results == 0
+  puts "No MySQLds Detected".bold.blue if results == 0
 #uts "Multiple MySQLds Detected!".bold.red if results > 1
 #puts Netid.check_for_localhome(user,system_user).cyan if results > 0
+unless options[:concise] 
+  puts "\n"
+  Netid.quota_check(netid,system_user)
+end
 puts "\n"
-Netid.quota_check(user,system_user)
+end
