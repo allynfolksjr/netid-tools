@@ -5,7 +5,7 @@ class Netid
   # Validate that string is in the form of a valid NetID. eg: 1-8 chars, doesn't start
   # with a number, and no special characters
   def self.validate_netid?(netid)
-    if netid.to_s.length > 8 || netid !~ /^[a-zA-Z]\w{0,7}$/
+    if netid.to_s.length > 8 || netid !~ /^[a-zA-Z][\w-]{0,7}$/
       false
     else
       true

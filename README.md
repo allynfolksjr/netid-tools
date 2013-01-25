@@ -130,6 +130,10 @@ The NetID you want to check
 
 Version History
 ===============
+## 0.3.7
+
+* Allow validate_netid? to return true for NetIDs that have a hyphen in them
+
 ## 0.3.6
 
 * Add concise mode via -c flag to ua_check (skips quota results)
