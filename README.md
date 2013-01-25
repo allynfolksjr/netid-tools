@@ -130,6 +130,13 @@ The NetID you want to check
 
 Version History
 ===============
+## 0.3.4
+
+* Add concise mode via -c flag to ua_check (skips quota results)
+* Add OptionParser to ua_check
+* Tweak formatting for results
+* Allow multiple lookups per execption
+
 ## 0.3.3
 
 * Fix broken code so that it properly displays localhome
