@@ -46,7 +46,6 @@ system_hostname = `hostname`.chomp
 hosts = [ "ovid01.u.washington.edu",
   "ovid02.u.washington.edu",
   "ovid03.u.washington.edu",
-  "ovid21.u.washington.edu",
   "vergil.u.washington.edu"
 ]
 

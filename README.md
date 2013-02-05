@@ -130,6 +130,11 @@ The NetID you want to check
 
 Version History
 ===============
+
+## 0.3.8
+
+* Remove ovid21.u.washington.edu from host list; retired system
+
 ## 0.3.7
 
 * Allow validate_netid? to return true for NetIDs that have a hyphen in them
