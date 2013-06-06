@@ -70,10 +70,12 @@ user.each do |netid|
     puts "No localhome detected"
   end
 
+  puts "Webtypes set: #{Netid.check_webtype(netid, system_user)}"
+
   puts "No MySQLds Detected".bold.blue if results == 0
 #uts "Multiple MySQLds Detected!".bold.red if results > 1
 #puts Netid.check_for_localhome(user,system_user).cyan if results > 0
-unless options[:concise] 
+unless options[:concise]
   puts "\n"
   Netid.quota_check(netid,system_user)
 end

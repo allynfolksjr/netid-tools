@@ -39,6 +39,14 @@ class Netid
     end
   end
 
+  def self.check_webtype(user,system_user)
+    host = 'ovid02.u.washington.edu'
+     Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
+      ssh.exec!("webtype -user #{user}").chomp
+    end
+  end
+
+
   def self.quota_check(user,system_user)
     host = 'ovid02.u.washington.edu'
     Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|

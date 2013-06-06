@@ -3,7 +3,7 @@ NetID Tools
 
 NetID Tools is a Ruby Gem that contains various methods for supporting Uniform Access computing at the University of Washington. These are mainly methods that I've found useful to create during the course of my job, but may be useful to others as well.
 
-Currently the focus is on finding and displaying information on any MySQL database server(s) that users may be running, as well as highlight potential quota issues. 
+Currently the focus is on finding and displaying information on any MySQL database server(s) that users may be running, as well as highlight potential quota issues.
 
 ## Installing
 
@@ -130,6 +130,11 @@ The NetID you want to check
 
 Version History
 ===============
+
+## 0.3.9
+
+* Add webtype check to list of returned results in ua_check executable
+* Add Netid.check_webtype method
 
 ## 0.3.8
 
