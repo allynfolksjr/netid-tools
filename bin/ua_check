@@ -41,28 +41,29 @@ user.each do |netid|
   puts "#{netid}".bold.green
   puts "-"*netid.length
   results = 0
+  checkr = Netid.new(netid,system_user)
   hosts.each do |host|
-    result = Netid.check_for_mysql_presence(host,netid,system_user)
+    result = checkr.check_for_mysql_presence(host)
     if result
       results += 1
       puts "MySQLd detected on #{result[0]}:#{result[1]}".blue
     end
   end
 
-  result = Netid.check_for_localhome(netid,system_user)
+  result = checkr.check_for_localhome
   if result
     puts "Localhome: #{result}".cyan
   else
     puts "No localhome detected"
   end
 
-  puts "Webtypes set: #{Netid.check_webtype(netid, system_user)}"
+  puts "Webtypes set: #{checkr.check_webtype}"
 
   puts "No MySQLds Detected".bold.blue if results == 0
 
   if options[:processes]
     hosts.each do |host|
-      processes = Netid.get_processes(host,netid,system_user)
+      processes = checkr.get_processes(host)
       if processes
         puts "\nProcesses for #{host}:\n".cyan
         processes.each do |l|
@@ -72,9 +73,9 @@ user.each do |netid|
     end
   end
 
-unless options[:concise]
+  unless options[:concise]
+    puts "\n"
+    checkr.quota_check
+  end
   puts "\n"
-  Netid.quota_check(netid,system_user)
-end
-puts "\n"
 end

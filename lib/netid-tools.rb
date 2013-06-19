@@ -2,6 +2,13 @@ require 'net/ssh'
 require 'colored'
 
 class Netid
+  attr_accessor :netid, :system_user
+
+  def initialize(netid,system_user=nil)
+    @netid = netid
+    @system_user = system_user
+  end
+
   def self.validate_netid?(netid)
     if netid.to_s.length > 8 || netid !~ /^[a-zA-Z][\w-]{0,7}$/
       false
@@ -10,9 +17,13 @@ class Netid
     end
   end
 
-  def self.check_for_mysql_presence(host,user,system_user)
+  def validate_netid?(netid)
+    Netid.validate_netid?(netid)
+  end
+
+  def check_for_mysql_presence(host)
     Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-      output = ssh.exec!("ps -U #{user} -u #{user} u")
+      output = ssh.exec!("ps -U #{netid} -u #{netid} u")
       if output =~ /mysql/
         /port=(?<port>\d+)/ =~ output
         [host,port]
@@ -22,13 +33,13 @@ class Netid
     end
   end
 
-  def self.get_processes(host,user,system_user)
+  def get_processes(host)
     output = ""
     Net::SSH.start(host,system_user,{auth_methods: %w(publickey)}) do |ssh|
-      if /no such user/i =~ ssh.exec!("id #{user}")
+      if /no such user/i =~ ssh.exec!("id #{netid}")
         output = nil
       else
-        output = ssh.exec!("ps -f --user=#{user}").lines
+        output = ssh.exec!("ps -f --user=#{netid}").lines
       end
     end
     if output.nil? || output.count == 1
@@ -38,10 +49,10 @@ class Netid
     end
   end
 
-  def self.check_for_localhome(user,system_user)
+  def check_for_localhome
     host = 'ovid02.u.washington.edu'
     Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-      output = ssh.exec!("cpw -poh #{user}")
+      output = ssh.exec!("cpw -poh #{netid}")
       if output =~ /Unknown/
         false
       else
@@ -50,18 +61,18 @@ class Netid
    end
  end
 
- def self.check_webtype(user,system_user)
+ def check_webtype
   host = 'ovid02.u.washington.edu'
   Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-    ssh.exec!("webtype -user #{user}").chomp
+    ssh.exec!("webtype -user #{netid}").chomp
   end
 end
 
 
-def self.quota_check(user,system_user)
+def quota_check
   host = 'ovid02.u.washington.edu'
   Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-    result = ssh.exec!("quota #{user}").chomp
+    result = ssh.exec!("quota #{netid}").chomp
       result = result.split("\n")
       result.delete_at(0) if result.first == ''
       result.each_with_index do |line,index|
