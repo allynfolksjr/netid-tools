@@ -43,7 +43,7 @@ Executables
 Methods
 =======
 
-## Netid#validate_netid?(netid)
+## Netid::validate_netid?(netid) / Netid#validate_netid?(netid)
 
 ### What it does
 
@@ -142,6 +142,10 @@ The NetID you want to check
 
 Version History
 ===============
+
+## 0.4.0
+
+* Switch most methods from Class->Instance
 
 ## 0.3.10
 
