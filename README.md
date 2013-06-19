@@ -118,6 +118,18 @@ The NetID you want to check
 
 Spits out various quota information, and highlights a line in red if a user is over quota. This writes directly to stdout.
 
+## Netid#get_processes(host,user,system_user)
+
+### What it does
+
+Retrieves running processes for specified NetID
+
+##Netid#check_webtype(user,system_user)
+
+### What it does
+
+Retrieves webtype(s) for specified NetID
+
 ### Method variables
 
 #### user
@@ -130,6 +142,10 @@ The NetID you want to check
 
 Version History
 ===============
+
+## 0.3.10
+
+* Add -p flag for full process check on hosts.
 
 ## 0.3.9
 

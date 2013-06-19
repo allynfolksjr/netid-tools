@@ -8,41 +8,27 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: ua_check [options]"
 
-
   opts.on("-c", "--concise", "Concise Results") do |c|
     options[:concise] = c
   end
   opts.on("-d", "--debug", "Run in debug (verbosely)") do |d|
     options[:debug] = d
   end
+  opts.on("-p", "--processes", "View running processes on UA dev systems") do |p|
+    options[:processes] = p
+  end
 end.parse!
 
-# This is a simple script that will go through various hosts and check to see
-# if a specified user is running MySQLd
-#
-# It assumes the user running the script has ssh keys setup for authentication
-#
-# Requires net-ssh gem and ruby compiled with openssl. Pulls SSH user from
-# system's `whoami` command.
-#
-# Required: Ruby 1.9.2+
-
-## To-Do:
-# * Consolidate SSH connect lines
-# * Grab owners/administrators?
-
-
-# Set up initial variables
-$results = 0
 raise "No NetID(s) specified. Bailing." if ARGV.empty?
+
 user = ARGV.map{|n| n.downcase}
 user.each do |netid|
   raise "#{netid} is not a valid NetID! Exiting." unless Netid.validate_netid?(netid)
 end
-# get the user of whoever is running script
+
 system_user = `whoami`.chomp
 system_hostname = `hostname`.chomp
-# Initialize the systems we'll check
+
 hosts = [ "ovid01.u.washington.edu",
   "ovid02.u.washington.edu",
   "ovid03.u.washington.edu",
@@ -73,8 +59,19 @@ user.each do |netid|
   puts "Webtypes set: #{Netid.check_webtype(netid, system_user)}"
 
   puts "No MySQLds Detected".bold.blue if results == 0
-#uts "Multiple MySQLds Detected!".bold.red if results > 1
-#puts Netid.check_for_localhome(user,system_user).cyan if results > 0
+
+  if options[:processes]
+    hosts.each do |host|
+      processes = Netid.get_processes(host,netid,system_user)
+      if processes
+        puts "\nProcesses for #{host}:\n".cyan
+        processes.each do |l|
+          puts l
+        end
+      end
+    end
+  end
+
 unless options[:concise]
   puts "\n"
   Netid.quota_check(netid,system_user)
