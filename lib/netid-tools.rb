@@ -64,7 +64,7 @@ class Netid
  def check_webtype
   host = 'ovid02.u.washington.edu'
   Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-    ssh.exec!("webtype -user #{netid}").chomp.split
+    ssh.exec!("webtype -user #{netid}").chomp.split(" ")
   end
 end
 
