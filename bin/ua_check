@@ -75,7 +75,7 @@ user.each do |netid|
 
   unless options[:concise]
     puts "\n"
-    checkr.quota_check
+    checkr.check_quota
   end
   puts "\n"
 end

@@ -112,7 +112,7 @@ The NetID you want to check
 	>> Netid.check_for_localhome("nikky","nikky")
 	=> "/ov03/d20/nikky"
 
-## Netid#quota_check(user,system_user)
+## Netid#check_quota(user,system_user)
 
 ### What it does
 
@@ -142,6 +142,10 @@ The NetID you want to check
 
 Version History
 ===============
+
+## 0.4.2
+
+* Rename check_quota -> quota_check
 
 ## 0.4.0
 

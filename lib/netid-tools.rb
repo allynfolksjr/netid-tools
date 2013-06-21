@@ -69,7 +69,7 @@ class Netid
 end
 
 
-def quota_check
+def check_quota 
   host = 'ovid02.u.washington.edu'
   Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
     result = ssh.exec!("quota #{netid}").chomp
