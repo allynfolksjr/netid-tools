@@ -1,5 +1,7 @@
 require 'net/ssh'
 require 'colored'
+require './lib/netid-validator'
+require './lib/generic-response'
 
 class Netid
   attr_accessor :netid, :system_user
@@ -9,16 +11,16 @@ class Netid
     @system_user = system_user
   end
 
-  def self.validate_netid?(netid)
-    if netid.to_s.length > 8 || netid !~ /^[a-zA-Z][\w-]{0,7}$/
-      false
-    else
-      true
-    end
+  def validate_netid
+    NetidValidator.validate_netid(netid)
   end
 
-  def validate_netid?(netid)
-    Netid.validate_netid?(netid)
+   def self.validate_netid?(netid)
+    NetidValidator.validate_netid(netid).response
+  end
+
+  def validate_netid?
+    NetidValidator.validate_netid(netid).response
   end
 
   def check_for_mysql_presence(host)

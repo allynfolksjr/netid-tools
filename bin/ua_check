@@ -23,7 +23,10 @@ raise "No NetID(s) specified. Bailing." if ARGV.empty?
 
 user = ARGV.map{|n| n.downcase}
 user.each do |netid|
-  raise "#{netid} is not a valid NetID! Exiting." unless Netid.validate_netid?(netid)
+  unless Netid.validate_netid?(netid)
+    puts "#{netid} is not a valid NetID! Exiting."
+    exit 1
+  end
 end
 
 system_user = `whoami`.chomp

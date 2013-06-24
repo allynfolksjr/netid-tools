@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     "lib/netid-tools.rb",
     "netid-tools.gemspec"
   ]
+  s.files.include('lib/**/*.rb')
   s.homepage = "http://github.com/allynfolksjr/netid-tools"
   s.licenses = ["Apache License, Version 2.0"]
   s.require_paths = ["lib"]
