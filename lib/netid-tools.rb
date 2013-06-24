@@ -83,7 +83,7 @@ def check_quota
       results << headings
       result.each do |line|
         line = line.split
-        line.insert(4, 'N/A') if line.size == 6
+        line.insert(4, 'n/a') if line.size == 6
         results << line
       end
     results
