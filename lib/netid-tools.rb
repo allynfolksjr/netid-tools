@@ -69,26 +69,33 @@ class Netid
 end
 
 
-def check_quota 
+def check_quota
   host = 'ovid02.u.washington.edu'
   Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
     result = ssh.exec!("quota #{netid}").chomp
-      result = result.split("\n")
-      result.delete_at(0) if result.first == ''
-      result.each_with_index do |line,index|
-        if index == 0 || index == 1
-          puts line
-          next
-        end
-        line_components = line.squeeze(" ").split(" ")
-        if line_components[1].to_f > line_components[2].to_f
-          puts "#{line.bold.red}"
-        elsif line_components[4] =~ /day/i || line_components[4].to_i > line_components[5].to_i
-          puts line.bold.red+'\n'
-        else
-          puts line
-        end
+    result = result.split("\n")
+    result.delete_at(0) if result.first == ''
+      uid = /uid\s(\d+)/.match(result.first)[1].to_i
+      result.delete_at(0)
+      headings = result.first.split
+      result.delete_at(0)
+      results = []
+      results << headings
+      result.each do |line|
+        line = line.split
+        line.insert(4, 'N/A') if line.size == 6
+        results << line
       end
+    results
+        # line_components = line.squeeze(" ").split(" ")
+        # if line_components[1].to_f > line_components[2].to_f
+        #   puts "#{line.bold.red}"
+        # elsif line_components[4] =~ /day/i || line_components[4].to_i > line_components[5].to_i
+        #   puts line.bold.red+'\n'
+        # else
+        #   puts line
+        # end
+      # end
     end
   end
 end
