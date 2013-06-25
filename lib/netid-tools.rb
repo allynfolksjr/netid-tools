@@ -1,37 +1,47 @@
 require 'net/ssh'
 require 'colored'
 require './lib/netid-validator'
+require './lib/check-mysql'
+require './lib/system-connect'
+
 require './lib/generic-response'
+require './lib/system-connect'
 
 class Netid
-  attr_accessor :netid, :system_user
+  include SystemConnect
 
-  def initialize(netid,system_user=nil)
+  attr_accessor :netid, :system_user, :systems
+
+  def initialize(netid,system_user=nil,systems=nil)
     @netid = netid
-    @system_user = system_user
+    @system_user = system_user || `whoami`.chomp
+    @systems = systems || ["ovid01.u.washington.edu",
+      "ovid02.u.washington.edu",
+      "ovid03.u.washington.edu",
+      "vergil.u.washington.edu"
+    ]
   end
 
   def validate_netid
-    NetidValidator.validate_netid(netid)
+    NetidValidator.do(netid)
   end
 
-   def self.validate_netid?(netid)
-    NetidValidator.validate_netid(netid).response
+  def self.validate_netid?(netid)
+    NetidValidator.do(netid).response
   end
 
   def validate_netid?
-    NetidValidator.validate_netid(netid).response
+    NetidValidator.do(netid).response
   end
 
   def check_for_mysql_presence(host)
-    Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-      output = ssh.exec!("ps -U #{netid} -u #{netid} u")
-      if output =~ /mysql/
-        /port=(?<port>\d+)/ =~ output
-        [host,port]
-      else
-        false
-      end
+    command = "ps -F -U #{netid} -u #{netid}"
+    result = exec_command(command,host)
+    if result =~ /mysql/
+      /port=(?<port>\d+)/ =~ result
+      [host,port]
+    else
+      false
     end
   end
 
@@ -65,8 +75,17 @@ class Netid
 
  def check_webtype
   host = 'ovid02.u.washington.edu'
+  match = []
   Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-    ssh.exec!("webtype -user #{netid}").chomp.split(" ")
+    match = ssh.exec!("webtype -user #{netid}").chomp.split(" ")
+  end
+  if match[0] == "user"
+    host = 'vergil.u.washington.edu'
+    Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
+      match = ssh.exec!("webtype -user #{netid}").chomp.split(" ")
+    end
+  else
+    match
   end
 end
 
@@ -77,17 +96,17 @@ def check_quota
     result = ssh.exec!("quota #{netid}").chomp
     result = result.split("\n")
     result.delete_at(0) if result.first == ''
-      uid = /uid\s(\d+)/.match(result.first)[1].to_i
-      result.delete_at(0)
-      headings = result.first.split
-      result.delete_at(0)
-      results = []
-      results << headings
-      result.each do |line|
-        line = line.split
-        line.insert(4, 'n/a') if line.size == 6
-        results << line
-      end
+    uid = /uid\s(\d+)/.match(result.first)[1].to_i
+    result.delete_at(0)
+    headings = result.first.split
+    result.delete_at(0)
+    results = []
+    results << headings
+    result.each do |line|
+      line = line.split
+      line.insert(4, 'n/a') if line.size == 6
+      results << line
+    end
     results
         # line_components = line.squeeze(" ").split(" ")
         # if line_components[1].to_f > line_components[2].to_f

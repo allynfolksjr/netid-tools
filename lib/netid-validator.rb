@@ -1,5 +1,5 @@
 class NetidValidator
-  def self.validate_netid(netid)
+  def self.do(netid)
     response = GenericResponse.new
     if netid.to_s.length > 8 || netid !~ /^[a-zA-Z][\w-]{0,7}$/
       response.response = false
@@ -10,6 +10,3 @@ class NetidValidator
     response
   end
 end
-
-
-
