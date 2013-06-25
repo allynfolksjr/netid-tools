@@ -16,10 +16,10 @@ class Netid
     @netid = netid
     @system_user = system_user || `whoami`.chomp
     @systems = systems || ["ovid01.u.washington.edu",
-      "ovid02.u.washington.edu",
-      "ovid03.u.washington.edu",
-      "vergil.u.washington.edu"
-    ]
+                           "ovid02.u.washington.edu",
+                           "ovid03.u.washington.edu",
+                           "vergil.u.washington.edu"
+                           ]
     @single_host = single_host || "ovid02.u.washington.edu"
   end
 
@@ -47,7 +47,6 @@ class Netid
   end
 
   def get_processes(host)
-    result = ""
     if /no such user/i =~ run_remote_command("id #{netid}",host)
       result = nil
     else
@@ -57,36 +56,34 @@ class Netid
     if result.nil? || result.count == 1
       false
     else
-     result
-   end
- end
-
- def check_for_localhome
-  result = run_remote_command("cpw -poh #{netid}",single_host)
-  if result =~ /Unknown/
-    false
-  else
-    result.chomp
+      result
+    end
   end
-end
 
-def check_webtype
-  result = []
-  command = "webtype -user #{netid}"
-  result = run_remote_command(command,single_host).chomp.split
-  if result[0] == "user"
-    result = run_remote_command(command,host).chomp.split(" ")
-  else
-    result
+  def check_for_localhome
+    result = run_remote_command("cpw -poh #{netid}",single_host)
+    if result =~ /Unknown/
+      false
+    else
+      result.chomp
+    end
   end
-end
+
+  def check_webtype
+    result = []
+    command = "webtype -user #{netid}"
+    result = run_remote_command(command,single_host).chomp.split
+    if result[0] == "user"
+      result = run_remote_command(command,host).chomp.split(" ")
+    else
+      result
+    end
+  end
 
 
-def check_quota
-  host = 'ovid02.u.washington.edu'
-  Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-    result = ssh.exec!("quota #{netid}").chomp
-    result = result.split("\n")
+  def check_quota
+    result = run_remote_command("quota #{netid}",single_host)
+    result = result.chomp.split("\n")
     result.delete_at(0) if result.first == ''
     uid = /uid\s(\d+)/.match(result.first)[1].to_i
     result.delete_at(0)
@@ -100,24 +97,12 @@ def check_quota
       results << line
     end
     results
-        # line_components = line.squeeze(" ").split(" ")
-        # if line_components[1].to_f > line_components[2].to_f
-        #   puts "#{line.bold.red}"
-        # elsif line_components[4] =~ /day/i || line_components[4].to_i > line_components[5].to_i
-        #   puts line.bold.red+'\n'
-        # else
-        #   puts line
-        # end
-      # end
-    end
   end
 
   private
-  def remove_extra_processes(processes)
-    processes.select do |line|
-      line !~ /ps -F --user|ssh(d:|-agent)|bash|zsh/
+    def remove_extra_processes(processes)
+      processes.select do |line|
+        line !~ /ps -F --user|ssh(d:|-agent)|bash|zsh/
+      end
     end
-  end
-
-
 end
