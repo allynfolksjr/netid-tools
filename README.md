@@ -143,6 +143,12 @@ The NetID you want to check
 Version History
 ===============
 
+## 0.5.0
+
+* Switch to new SSH connection method; reuse already existing SSH connection for host if it exists
+* Tighten up code
+* Fix bugs
+
 ## 0.4.2
 
 * Rename check_quota -> quota_check
