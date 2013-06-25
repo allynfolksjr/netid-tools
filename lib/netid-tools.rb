@@ -1,9 +1,8 @@
 require 'net/ssh'
 require 'colored'
-require './lib/netid-validator'
-require './lib/system-connect'
-
-require './lib/system-connect'
+require 'netid-validator'
+require 'system-connect'
+require 'generic-response'
 
 class Netid
   include SystemConnect
