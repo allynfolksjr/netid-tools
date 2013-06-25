@@ -36,7 +36,7 @@ class Netid
 
   def check_for_mysql_presence(host)
     command = "ps -F -U #{netid} -u #{netid}"
-    result = exec_command(command,host)
+    result = run_remote_command(command,host)
     if result =~ /mysql/
       /port=(?<port>\d+)/ =~ result
       [host,port]
@@ -46,19 +46,18 @@ class Netid
   end
 
   def get_processes(host)
-    output = ""
-    Net::SSH.start(host,system_user,{auth_methods: %w(publickey)}) do |ssh|
-      if /no such user/i =~ ssh.exec!("id #{netid}")
-        output = nil
-      else
-        output = ssh.exec!("ps -f --user=#{netid}").lines
-      end
+    result = ""
+    if /no such user/i =~ run_remote_command("id #{netid}",host)
+      result = nil
+    else
+      result = run_remote_command("ps -F --user=#{netid}",host).lines
     end
-    if output.nil? || output.count == 1
+    if result.nil? || result.count == 1
       false
     else
-      output
+      result
     end
+
   end
 
   def check_for_localhome

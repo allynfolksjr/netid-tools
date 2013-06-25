@@ -14,7 +14,7 @@ module SystemConnect
     Net::SSH.start(host,user,{auth_methods: %w(publickey)})
   end
 
-  def exec_command(command, host)
+  def run_remote_command(command, host)
     connection = find_connection_for_host(host)
     connection.exec!(command)
     # if connection
