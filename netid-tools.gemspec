@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "netid-tools"
-  s.version = "0.5.0"
+  s.version = "0.5.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nikky Southerland"]
@@ -25,10 +25,10 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "bin/ua_check",
+    "lib/generic-response.rb",
     "lib/netid-tools.rb",
     "lib/netid-validator.rb",
     "lib/system-connect.rb",
-    "lib/generic-response.rb",
     "netid-tools.gemspec"
   ]
   s.homepage = "http://github.com/allynfolksjr/netid-tools"
