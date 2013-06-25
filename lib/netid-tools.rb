@@ -1,10 +1,8 @@
 require 'net/ssh'
 require 'colored'
 require './lib/netid-validator'
-require './lib/check-mysql'
 require './lib/system-connect'
 
-require './lib/generic-response'
 require './lib/system-connect'
 
 class Netid
