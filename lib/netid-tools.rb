@@ -62,15 +62,12 @@ class Netid
  end
 
  def check_for_localhome
-  host = 'ovid02.u.washington.edu'
-  Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-    output = ssh.exec!("cpw -poh #{netid}")
-    if output =~ /Unknown/
-      false
-    else
-     output.chomp
-   end
- end
+  result = run_remote_command("cpw -poh #{netid}",single_host)
+  if result =~ /Unknown/
+    false
+  else
+    result.chomp
+  end
 end
 
 def check_webtype
