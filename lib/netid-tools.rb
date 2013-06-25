@@ -10,9 +10,9 @@ require './lib/system-connect'
 class Netid
   include SystemConnect
 
-  attr_accessor :netid, :system_user, :systems
+  attr_accessor :netid, :system_user, :systems, :single_host
 
-  def initialize(netid,system_user=nil,systems=nil)
+  def initialize(netid,system_user=nil,systems=nil,single_host=nil)
     @netid = netid
     @system_user = system_user || `whoami`.chomp
     @systems = systems || ["ovid01.u.washington.edu",
@@ -20,6 +20,7 @@ class Netid
       "ovid03.u.washington.edu",
       "vergil.u.washington.edu"
     ]
+    @single_host = single_host || "ovid02.u.washington.edu"
   end
 
   def validate_netid
@@ -51,40 +52,35 @@ class Netid
       result = nil
     else
       result = run_remote_command("ps -F --user=#{netid}",host).lines
+      result = remove_extra_processes(result)
     end
     if result.nil? || result.count == 1
       false
     else
-      result
-    end
-
-  end
-
-  def check_for_localhome
-    host = 'ovid02.u.washington.edu'
-    Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-      output = ssh.exec!("cpw -poh #{netid}")
-      if output =~ /Unknown/
-        false
-      else
-       output.chomp
-     end
+     result
    end
  end
 
- def check_webtype
+ def check_for_localhome
   host = 'ovid02.u.washington.edu'
-  match = []
   Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-    match = ssh.exec!("webtype -user #{netid}").chomp.split(" ")
-  end
-  if match[0] == "user"
-    host = 'vergil.u.washington.edu'
-    Net::SSH.start(host,system_user, {auth_methods: %w( publickey )}) do |ssh|
-      match = ssh.exec!("webtype -user #{netid}").chomp.split(" ")
-    end
+    output = ssh.exec!("cpw -poh #{netid}")
+    if output =~ /Unknown/
+      false
+    else
+     output.chomp
+   end
+ end
+end
+
+def check_webtype
+  result = []
+  command = "webtype -user #{netid}"
+  result = run_remote_command(command,single_host).chomp.split
+  if result[0] == "user"
+    result = run_remote_command(command,host).chomp.split(" ")
   else
-    match
+    result
   end
 end
 
@@ -118,4 +114,13 @@ def check_quota
       # end
     end
   end
+
+  private
+  def remove_extra_processes(processes)
+    processes.select do |line|
+      line !~ /ps -F --user|ssh(d:|-agent)|bash|zsh/
+    end
+  end
+
+
 end
