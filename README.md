@@ -143,6 +143,10 @@ The NetID you want to check
 Version History
 ===============
 
+## 0.5.2
+
+* Expand cluster paths if available in quota output
+
 ## 0.5.0
 
 * Switch to new SSH connection method; reuse already existing SSH connection for host if it exists
