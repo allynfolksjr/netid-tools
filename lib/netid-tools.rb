@@ -119,7 +119,6 @@ class Netid
       asking_cluster_string = line.first
 
       search = clusters.find_index do |c|
-        puts "searching for #{asking_cluster_string} in #{c}"
         c =~ /#{asking_cluster_string}/
       end
 

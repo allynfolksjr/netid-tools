@@ -143,6 +143,10 @@ The NetID you want to check
 Version History
 ===============
 
+## 0.5.3
+
+* Remove debug function
+
 ## 0.5.2
 
 * Expand cluster paths if available in quota output
