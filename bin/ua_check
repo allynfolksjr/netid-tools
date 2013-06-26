@@ -69,11 +69,19 @@ user.each do |netid|
     hosts.each do |host|
       processes = checkr.get_processes(host)
       if processes
-        puts "\nProcesses for #{host}:\n".cyan
-        processes.each do |l|
-          puts l
+        table = Terminal::Table.new do |t|
+          t.title = host
+          t.headings = processes.headers
+          processes.processes.each do |p|
+            if p[9].length > 80
+              p[9].slice!(80,p[9].length-80)
+            end
+            t << p
+          end
         end
+
       end
+      puts table
     end
   end
 

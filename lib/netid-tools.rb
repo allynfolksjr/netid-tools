@@ -53,7 +53,7 @@ class Netid
       raw_processes = run_remote_command(command,host).lines.map{|l| l.chomp}
       refined_processes = UnixProcesses.new(host)
 
-      refined_processes.headers = raw_processes[0]
+      refined_processes.headers = raw_processes[0].split
       raw_processes.delete_at(0)
 
       refined_processes.processes = raw_processes.map do |line|
@@ -65,6 +65,7 @@ class Netid
         end
         line
       end
+      refined_processes
     end
 
 
