@@ -48,14 +48,37 @@ class Netid
     if /no such user/i =~ run_remote_command("id #{netid}",host)
       result = nil
     else
-      result = run_remote_command("ps -F --user=#{netid}",host).lines.map{|l| l.chomp}
-      result = remove_extra_processes(result)
+
+      command = "ps -o pid,user,cputime,nice,wchan,pcpu,pmem,rss,start_time,cmd --user #{netid}"
+      raw_processes = run_remote_command(command,host).lines.map{|l| l.chomp}
+      refined_processes = UnixProcesses.new(host)
+
+      refined_processes.headers = raw_processes[0]
+      raw_processes.delete_at(0)
+
+      refined_processes.processes = raw_processes.map do |line|
+        line = line.split
+
+        if line.size > 9
+          process = line.slice!(9,line.size-9)
+          line[9] = process.join(" ")
+        end
+        line
+      end
     end
-    if result.nil? || result.count == 1
-      false
-    else
-      result
-    end
+
+
+    # if /no such user/i =~ run_remote_command("id #{netid}",host)
+    #   result = nil
+    # else
+    #   result = run_remote_command("ps -F --user=#{netid}",host).lines.map{|l| l.chomp}
+    #   result = remove_extra_processes(result)
+    # end
+    # if result.nil? || result.count == 1
+    #   false
+    # else
+    #   result
+    # end
   end
 
   def check_for_localhome
@@ -138,4 +161,5 @@ class Netid
         end
       end
     end
+
 end
