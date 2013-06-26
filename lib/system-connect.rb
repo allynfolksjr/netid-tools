@@ -1,14 +1,6 @@
 module SystemConnect
 
-  # def initialize_ssh_connections
-  #   connections = []
-  #   systems.each do |host|
-  #     puts "Attempting connection for #{system_user}@#{host}"
-  #     connections << SystemSSH.new(host,connect(host, system_user))
-  #     puts "Connection successful for #{host}"
-  #   end
-  #   @connections = connections
-  # end
+  private
 
   def connect(host,user)
     Net::SSH.start(host,user,{auth_methods: %w(publickey)})
@@ -17,19 +9,23 @@ module SystemConnect
   def run_remote_command(command, host)
     connection = find_connection_for_host(host)
     connection.exec!(command)
-    # if connection
-    #   connection.exec(command) do |ch, stream, data|
-    #     unless stream == :stderr
-    #       puts data
-    #     end
-    #   end
-    # else
-    #   puts "No connection found for host: #{host}"
-    # end
   end
 
   def loop
     connection.loop
+  end
+
+
+  def queue_multithreaded_command(command,host)
+    if connection
+      connection.exec(command) do |ch, stream, data|
+        unless stream == :stderr
+          puts data
+        end
+      end
+    else
+      puts "No connection found for host: #{host}"
+    end
   end
 
   def find_connection_for_host(host)

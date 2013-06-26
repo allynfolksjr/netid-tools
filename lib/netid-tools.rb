@@ -131,7 +131,7 @@ class Netid
       if user_clusters
         user_clusters
       else
-        command = "gpw -D | sed '1d' | sed 'N;$!P;$!D;$d' | sort | uniq"
+        command = "gpw -D #{netid} | sed '1d' | sed 'N;$!P;$!D;$d' | sort | uniq"
         run_remote_command(command,single_host).split("\n").map do |line|
           line.chomp
         end
