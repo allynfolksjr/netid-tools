@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
     "lib/netid-tools.rb",
     "lib/netid-validator.rb",
     "lib/system-connect.rb",
+    "lib/unix-processes.rb",
     "netid-tools.gemspec"
   ]
   s.homepage = "http://github.com/allynfolksjr/netid-tools"

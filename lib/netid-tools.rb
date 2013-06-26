@@ -3,6 +3,7 @@ require 'colored'
 require 'netid-validator'
 require 'system-connect'
 require 'generic-response'
+require 'unix-processes'
 
 class Netid
   include SystemConnect
