@@ -15,7 +15,6 @@ module SystemConnect
     connection.loop
   end
 
-
   def queue_multithreaded_command(command,host)
     if connection
       connection.exec(command) do |ch, stream, data|

@@ -90,7 +90,6 @@ user.each do |netid|
         t << line
       end
     end
-
     puts table
   end
   puts "\n"

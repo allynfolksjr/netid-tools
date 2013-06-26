@@ -47,7 +47,7 @@ class Netid
     if /no such user/i =~ run_remote_command("id #{netid}",host)
       result = nil
     else
-      result = run_remote_command("ps -F --user=#{netid}",host).lines
+      result = run_remote_command("ps -F --user=#{netid}",host).lines.map{|l| l.chomp}
       result = remove_extra_processes(result)
     end
     if result.nil? || result.count == 1
