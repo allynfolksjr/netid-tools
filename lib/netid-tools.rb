@@ -7,7 +7,7 @@ require 'generic-response'
 class Netid
   include SystemConnect
 
-  attr_accessor :netid, :system_user, :systems, :single_host
+  attr_accessor :netid, :system_user, :systems, :single_host, :user_clusters
 
   def initialize(netid,system_user=nil,systems=nil,single_host=nil)
     @netid = netid
@@ -84,13 +84,17 @@ class Netid
     result.delete_at(0) if result.first == ''
     uid = /uid\s(\d+)/.match(result.first)[1].to_i
     result.delete_at(0)
-    headings = result.first.split
-    result.delete_at(0)
+
+    headings = process_quota_headers(result)
+
     results = []
     results << headings
     result.each do |line|
       line = line.split
       line.insert(4, 'n/a') if line.size == 6
+
+      expand_cluster_path(line)
+
       results << line
     end
     results
@@ -100,6 +104,38 @@ class Netid
     def remove_extra_processes(processes)
       processes.select do |line|
         line !~ /ps -F --user|ssh(d:|-agent)|bash|zsh/
+      end
+    end
+
+    def process_quota_headers(quota_results)
+      headings = quota_results.first.split
+      quota_results.delete_at(0)
+      headings
+    end
+
+    def expand_cluster_path(line)
+      clusters = get_user_clusters
+
+      asking_cluster_string = line.first
+
+      search = clusters.find_index do |c|
+        puts "searching for #{asking_cluster_string} in #{c}"
+        c =~ /#{asking_cluster_string}/
+      end
+
+      line[0] = clusters[search] if search
+
+      line
+    end
+
+    def get_user_clusters
+      if user_clusters
+        user_clusters
+      else
+        command = "gpw -D | sed '1d' | sed 'N;$!P;$!D;$d' | sort | uniq"
+        run_remote_command(command,single_host).split("\n").map do |line|
+          line.chomp
+        end
       end
     end
 end
