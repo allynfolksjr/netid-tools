@@ -3,6 +3,7 @@ require 'net/ssh'
 require 'colored'
 require 'netid-tools'
 require 'optparse'
+require 'terminal-table'
 
 options = {}
 OptionParser.new do |opts|
@@ -78,9 +79,19 @@ user.each do |netid|
 
   unless options[:concise]
     puts "\n"
-    checkr.check_quota.each do |l|
-      puts l.join(" ")
+    raw_quota = checkr.check_quota
+    headers = raw_quota.rotate!.pop
+    table = Terminal::Table.new do |t|
+      t.headings = headers
+      raw_quota.each do |line|
+        if line[1].to_f > line[2].to_f
+          line[1] = "#{line[1]} (Over Quota!)"
+        end
+        t << line
+      end
     end
+
+    puts table
   end
   puts "\n"
 end

@@ -143,6 +143,10 @@ The NetID you want to check
 Version History
 ===============
 
+## 0.5.4
+
+* Switch table formatting on ua_check binary
+
 ## 0.5.3
 
 * Remove debug function
