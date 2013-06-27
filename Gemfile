@@ -4,6 +4,7 @@ gem "nokogiri"
 gem "colored"
 gem "net-ssh"
 gem 'terminal-table'
+gem 'rspec'
 group :development do
   gem "shoulda", ">= 0"
   gem "rdoc", "~> 3.12"

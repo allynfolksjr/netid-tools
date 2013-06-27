@@ -8,7 +8,7 @@ require 'unix-processes'
 class Netid
   include SystemConnect
 
-  attr_accessor :netid, :system_user, :systems, :single_host, :user_clusters
+  attr_accessor :netid, :system_user, :systems, :single_host
 
   def initialize(netid,system_user=nil,systems=nil,single_host=nil)
     @netid = netid

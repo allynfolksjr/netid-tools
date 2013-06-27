@@ -143,6 +143,10 @@ The NetID you want to check
 Version History
 ===============
 
+## 0.5.5
+
+* Switch process listing to individual class
+
 ## 0.5.4
 
 * Switch table formatting on ua_check binary
