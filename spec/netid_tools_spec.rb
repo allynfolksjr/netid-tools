@@ -163,21 +163,49 @@ describe Netid do
   end
 
   context "#check_quota" do
+    default_quota_return_objects = []
     it "returns an object of results on success" do
-      # mock_system_response("")
-      @netid.check_quota
+      mock_system_response("\nuser uid 1 2 3\nheader a b c\nfilesystem usage quota limit files limit",default_quota_return_objects)
+      @netid.check_quota.should be_true
     end
     it "returns false upon failure" do
+      mock_system_response("unknown user")
+      @netid.check_quota.response.should be_false
     end
     it "return object has and responds to #response" do
+      mock_system_response("\nuser uid 1 2 3\nheader a b c\nfilesystem usage quota limit files limit",default_quota_return_objects)
+      @netid.check_quota.response.should eq [%w(filesystem usage quota limit n/a files limit)]
+    end
+    it "returns object with headers" do
+      mock_system_response("\nuser uid 1 2 3\nheader a b c\nfilesystem usage quota limit files limit",default_quota_return_objects)
+      @netid.check_quota.headers.should eq %w(header a b c)
     end
     it "will insert 'n/a' into 5th element if blank" do
+      mock_system_response("\nuser uid 1 2 3\nheader a b c\nfilesystem usage quota limit files limit\nfilesystem usage quota limit files limit",default_quota_return_objects)
+      @netid.check_quota.response.should eq [%w(filesystem usage quota limit n/a files limit), %w(filesystem usage quota limit n/a files limit)]
     end
     it "will not insert 'n/a' into 5th element if length is 7" do
+      mock_system_response("\nuser uid 1 2 3\nheader a b c\nfilesystem usage quota limit grace files limit\nfilesystem usage quota limit grace files limit",default_quota_return_objects)
+      @netid.check_quota.response.should eq [%w(filesystem usage quota limit grace files limit), %w(filesystem usage quota limit grace files limit)]
+    end
+    it "will handle mixed 5th element situations" do
+      mock_system_response("\nuser uid 1 2 3\nheader a b c\nfilesystem usage quota limit  files limit\nfilesystem usage quota limit grace files limit",default_quota_return_objects)
+      @netid.check_quota.response.should eq [%w(filesystem usage quota limit n/a files limit), %w(filesystem usage quota limit grace files limit)]
     end
     it "will translate cluster shortnames into full path, if available" do
+      mock_system_response("\nuser uid 1 2 3\nheader a b c\n/cg32 usage quota limit  files limit\n/hw00 usage quota limit grace files limit",
+       ["/cg32/rw00/derp", "/hw00/w00/ferp"])
+      @netid.check_quota.response.should eq [%w(/cg32/rw00/derp usage quota limit n/a files limit), %w(/hw00/w00/ferp usage quota limit grace files limit)]
     end
     it "will fall back to cluster shortnames if full path not found" do
+      mock_system_response("\nuser uid 1 2 3\nheader a b c\n/cg32 usage quota limit  files limit\n/hw00 usage quota limit grace files limit",
+       ["/cg31/rw00/derp", "/hw01/w00/ferp"])
+      @netid.check_quota.response.should eq [%w(/cg32 usage quota limit n/a files limit), %w(/hw00 usage quota limit grace files limit)]
+    end
+    it "will handle mixed matching and unmatching clusters" do
+      mock_system_response("\nuser uid 1 2 3\nheader a b c\n/cg32 usage quota limit  files limit\n/hw00 usage quota limit grace files limit",
+        ["/cg31/rw00/derp", "/hw00/w00/ferp"])
+      @netid.check_quota.response.should eq [%w(/cg32 usage quota limit n/a files limit), %w(/hw00/w00/ferp usage quota limit grace files limit)]
     end
   end
 end

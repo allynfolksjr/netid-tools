@@ -116,46 +116,20 @@ class Netid
     else
       result = QuotaResponse.new
 
-      command_result = command_result.chomp.split
-      command_result.delete_at(0) if command_result.first? == ""
+      command_result = command_result.chomp.split("\n")
+      command_result.delete_at(0) if command_result.first == ""
       command_result.delete_at(0) # remove uid line
 
       result.headers = process_quota_headers(command_result)
-
-      result.response << command_result.map do |line|
+      result.response = command_result.map do |line|
         line = line.split
         line.insert(4, 'n/a') if line.size == 6
+        expand_cluster_path(line)
+        line
       end
     end
     result
   end
-
-
-
-
-
-
-
-
-    # command_result = command_result.chomp.split("\n")
-    # command_result.delete_at(0) if command_result.first == ''
-    # # uid = /uid\s(\d+)/.match(command_result.first)[1].to_i
-    # command_result.delete_at(0)
-
-    # headings = process_quota_headers(command_result)
-
-    # command = []
-    # command << headings
-    # command_result.each do |line|
-    #   line = line.split
-    #   line.insert(4, 'n/a') if line.size == 6
-
-    #   expand_cluster_path(line)
-
-    #   results << line
-    # end
-    # results
-  # end
 
   private
     def remove_extra_processes(processes)
