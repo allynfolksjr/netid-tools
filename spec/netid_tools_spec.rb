@@ -80,10 +80,37 @@ describe Netid do
       @netid.should_receive(:run_remote_command).and_return("")
       @netid.check_for_mysql_presence('fake.example.com').should be_false
     end
-
   end
 
+  context "#get_processes" do
+    it "returns false if a user is not detected"
+    it "returns a UnixProcesses object on success"
+    it "contains proper headers with successful return"
+    it "properly merges comamnds with spaces into one array element"
+    it "doesn't contain newlines"
+    it "doesn't contain headers in main processes object"
+    it "has processes which responds to .each"
+  end
 
+  context "#check_for_localhome" do
+    it "returns the localhome location upon success"
+    it "returns false if no result"
+  end
 
+  context "#check_webtype" do
+    it "returns array of webtypes upon success"
+    it "returns false if no webtypes found"
+    it "tries alternate host if primary returns no user found"
+    it "returns array of webtypes on alternate host upon success"
+    it "returns false if no webtypes found on alternate host"
+  end
 
+  context "#check_quota" do
+    it "returns an array of results on success"
+    it "has the first line of result be headings"
+    it "will insert 'n/a' into 5th element if blank"
+    it "will not insert 'n/a' into 5th element if length is 7"
+    it "will translate cluster shortnames into full path, if available"
+    it "will fall back to cluster shortnames if full path not found"
+  end
 end

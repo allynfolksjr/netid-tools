@@ -46,7 +46,7 @@ class Netid
 
   def get_processes(host)
     if /no such user/i =~ run_remote_command("id #{netid}",host)
-      result = nil
+      result = false
     else
 
       command = "ps -o pid,user,cputime,nice,wchan,pcpu,pmem,rss,start_time,cmd --user #{netid}"
