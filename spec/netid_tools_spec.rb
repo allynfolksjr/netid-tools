@@ -2,6 +2,13 @@ require 'spec_helper'
 require 'netid-tools'
 
 describe Netid do
+
+  def mock_system_response(*responses)
+    responses.each do |response|
+      @netid.should_receive(:run_remote_command).and_return(response)
+    end
+  end
+
   before do
     @netid = Netid.new('test')
   end
@@ -77,55 +84,48 @@ describe Netid do
       --log-error=/da23/d38/nikky/mysql/data/mysql-bin.err
       --pid-file=/da23/d38/nikky/mysql/data/ovid02.u.washington.edu.pid
       --socket=/da23/d38/nikky/mysql.sock --port=5280"
-      @netid.should_receive(:run_remote_command).and_return(valid_return)
+      mock_system_response(valid_return)
       @netid.check_for_mysql_presence('fake.example.com').should eq ['fake.example.com', 5280]
     end
     it "returns false with no valid result" do
-      @netid.should_receive(:run_remote_command).and_return("")
+      mock_system_response("")
       @netid.check_for_mysql_presence('fake.example.com').should be_false
     end
   end
 
   context "#get_processes" do
     it "returns false if a user is not detected" do
-      @netid.should_receive(:run_remote_command).and_return("no such user")
+      mock_system_response("no such user")
       @netid.get_processes('example.com').should be_false
     end
     it "returns a UnixProcesses object on success" do
-      @netid.should_receive(:run_remote_command).and_return("exists")
-      @netid.should_receive(:run_remote_command).and_return("1\n2\n3")
+      mock_system_response("exists","1\n2\n3")
       @netid.get_processes('example.com').class.should eq UnixProcesses
     end
     it "contains proper headers with successful return" do
-      @netid.should_receive(:run_remote_command).and_return("exists")
-      @netid.should_receive(:run_remote_command).and_return("a b c\n2\n3")
+      mock_system_response("exists","a b c\n2\n3")
       @netid.get_processes('example.com').headers.should eq %w(a b c)
     end
     it "properly merges commnds with spaces into one array element" do
-      @netid.should_receive(:run_remote_command).and_return("exists")
-      @netid.should_receive(:run_remote_command).and_return("a b c\n1 2 3 4 5 6 7 8 9 command with space\n2")
+      mock_system_response("exists","a b c\n1 2 3 4 5 6 7 8 9 command with space\n2")
       @netid.get_processes('example.com').processes.first[9].should eq "command with space"
     end
     it "properly handles commnds without spaces" do
-      @netid.should_receive(:run_remote_command).and_return("exists")
-      @netid.should_receive(:run_remote_command).and_return("a b c\n1 2 3 4 5 6 7 8 9 command_without_space\n2")
+      mock_system_response("exists","a b c\n1 2 3 4 5 6 7 8 9 command_without_space\n2")
       @netid.get_processes('example.com').processes.first[9].should eq "command_without_space"
     end
     it "doesn't contain newlines" do
-      @netid.should_receive(:run_remote_command).and_return("exists")
-      @netid.should_receive(:run_remote_command).and_return("1\n2\n3")
+      mock_system_response("exists","1\n2\n3")
       @netid.get_processes('example.com').processes.select{|s| s =~ /\/n/}.should be_empty
     end
     it "doesn't contain headers in main processes object" do
-      @netid.should_receive(:run_remote_command).and_return("exists")
-      @netid.should_receive(:run_remote_command).and_return("headers pid guid\n1 2 3 4 5 6 7 8 9 command with space\n2")
+      mock_system_response("exists","headers pid guid\n1 2 3 4 5 6 7 8 9 command with space\n2")
       return_obj = @netid.get_processes('example.com')
       return_obj.headers.should eq %w(headers pid guid)
       return_obj.processes.should_not include %w(headers pid guid)
     end
     it "has processes which responds to .each" do
-      @netid.should_receive(:run_remote_command).and_return("exists")
-      @netid.should_receive(:run_remote_command).and_return("headers pid guid\n1 2 3 4 5 6 7 8 9 command with space\n2")
+      mock_system_response("exists","headers pid guid\n1 2 3 4 5 6 7 8 9 command with space\n2")
       return_obj = @netid.get_processes('example.com')
       return_obj.processes.should respond_to(:each)
     end
@@ -133,30 +133,30 @@ describe Netid do
 
   context "#check_for_localhome" do
     it "returns the localhome location upon success" do
-      @netid.should_receive(:run_remote_command).and_return("/ov03/dw21/derp")
+      mock_system_response("/ov03/dw21/derp")
       @netid.check_for_localhome.should eq ("/ov03/dw21/derp")
     end
     it "returns false if no result" do
-      @netid.should_receive(:run_remote_command).and_return("user Unknown")
+      mock_system_response("user Unknown")
       @netid.check_for_localhome.should be_false
     end
   end
 
   context "#check_webtype" do
     it "returns array of webtypes upon success" do
-      @netid.should_receive(:run_remote_command).and_return("depts\ncourses")
+      mock_system_response("depts\ncourses")
       @netid.check_webtype.should eq %w(depts courses)
     end
     it "returns empty array if no webtypes found" do
-      @netid.should_receive(:run_remote_command).and_return("")
+      mock_system_response("")
       @netid.check_webtype.should be_empty
     end
     it "tries alternate host if primary returns no user found" do
-      @netid.should_receive(:run_remote_command).and_return("user Unknown","depts\ncourses")
+      mock_system_response("user Unknown","depts\ncourses")
       @netid.check_webtype.should eq %w(depts courses)
     end
     it "returns empty array if no webtypes found on alternate host" do
-      @netid.should_receive(:run_remote_command).and_return("user Unknown","")
+      mock_system_response("user Unknown","")
       @netid.check_webtype.should eq %w()
     end
 
