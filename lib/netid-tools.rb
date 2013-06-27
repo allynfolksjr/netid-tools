@@ -38,7 +38,7 @@ class Netid
     result = run_remote_command(command,host)
     if result =~ /mysql/
       /port=(?<port>\d+)/ =~ result
-      [host,port]
+      [host,port.to_i]
     else
       false
     end

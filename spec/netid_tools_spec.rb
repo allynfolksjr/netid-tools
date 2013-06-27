@@ -23,6 +23,12 @@ describe Netid do
       @netid.should respond_to :single_host
       @netid.single_host.should_not be_nil
     end
+    it "requires a NetID to be initialized" do
+      expect do
+        Netid.new
+      end.to raise_error
+    end
+
   end
 
   context "#validate_netid" do
@@ -57,5 +63,27 @@ describe Netid do
       Netid.validate_netid?('123test').should be_false
     end
   end
+
+  context "#check_for_mysql_presence" do
+    it "returns array with host and port on valid return" do
+      valid_return = "nikky    10167  0.0  0.0 271528  2904 ?        SNl   2012
+      0:02 /da23/d38/nikky/mysql/bin/mysqld --basedir=/da23/d38/nikky/mysql
+      --datadir=/da23/d38/nikky/mysql/data
+      --plugin-dir=/da23/d38/nikky/mysql/lib/plugin
+      --log-error=/da23/d38/nikky/mysql/data/mysql-bin.err
+      --pid-file=/da23/d38/nikky/mysql/data/ovid02.u.washington.edu.pid
+      --socket=/da23/d38/nikky/mysql.sock --port=5280"
+      @netid.should_receive(:run_remote_command).and_return(valid_return)
+      @netid.check_for_mysql_presence('fake.example.com').should eq ['fake.example.com', 5280]
+    end
+    it "returns false with no valid result" do
+      @netid.should_receive(:run_remote_command).and_return("")
+      @netid.check_for_mysql_presence('fake.example.com').should be_false
+    end
+
+  end
+
+
+
 
 end
