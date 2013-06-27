@@ -8,9 +8,9 @@ require 'unix-processes'
 class Netid
   include SystemConnect
 
-  attr_accessor :netid, :system_user, :systems, :single_host
+  attr_accessor :netid, :system_user, :systems, :staff_host, :student_host
 
-  def initialize(netid,system_user=nil,systems=nil,single_host=nil)
+  def initialize(netid,system_user=nil,systems=nil,staff_host=nil,student_host=nil)
     @netid = netid
     @system_user = system_user || `whoami`.chomp
     @systems = systems || ["ovid01.u.washington.edu",
@@ -18,7 +18,8 @@ class Netid
                            "ovid03.u.washington.edu",
                            "vergil.u.washington.edu"
                            ]
-    @single_host = single_host || "ovid02.u.washington.edu"
+    @staff_host = staff_host || "ovid02.u.washington.edu"
+    @student_host = student_host || "vergil.u.washington.edu"
   end
 
   def validate_netid
@@ -83,7 +84,7 @@ class Netid
   end
 
   def check_for_localhome
-    result = run_remote_command("cpw -poh #{netid}",single_host)
+    result = run_remote_command("cpw -poh #{netid}",staff_host)
     if result =~ /Unknown/
       false
     else
@@ -94,9 +95,9 @@ class Netid
   def check_webtype
     result = []
     command = "webtype -user #{netid}"
-    result = run_remote_command(command,single_host).chomp.split
+    result = run_remote_command(command,staff_host).chomp.split
     if result[0] == "user"
-      result = run_remote_command(command,host).chomp.split(" ")
+      result = run_remote_command(command,student_host).chomp.split
     else
       result
     end
@@ -104,7 +105,7 @@ class Netid
 
 
   def check_quota
-    result = run_remote_command("quota #{netid}",single_host)
+    result = run_remote_command("quota #{netid}",staff_host)
     result = result.chomp.split("\n")
     result.delete_at(0) if result.first == ''
     uid = /uid\s(\d+)/.match(result.first)[1].to_i
@@ -157,7 +158,7 @@ class Netid
         user_clusters
       else
         command = "gpw -D #{netid} | sed '1d' | sed 'N;$!P;$!D;$d' | sort | uniq"
-        run_remote_command(command,single_host).split("\n").map do |line|
+        run_remote_command(command,staff_host).split("\n").map do |line|
           line.chomp
         end
       end
