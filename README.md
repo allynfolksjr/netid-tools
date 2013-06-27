@@ -143,6 +143,11 @@ The NetID you want to check
 Version History
 ===============
 
+## 0.6.0
+
+* Add tests; refactor various methods
+* Switch more commands to use Response objects rather than bare responses. Documentation pending.
+
 ## 0.5.5
 
 * Switch process listing to individual class
