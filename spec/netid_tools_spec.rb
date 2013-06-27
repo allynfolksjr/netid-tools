@@ -128,8 +128,15 @@ describe Netid do
   end
 
   context "#check_for_localhome" do
-    it "returns the localhome location upon success"
-    it "returns false if no result"
+    it "returns the localhome location upon success" do
+      @netid.should_receive(:run_remote_command).and_return("/ov03/dw21/derp")
+      @netid.check_for_localhome.should eq ("/ov03/dw21/derp")
+    end
+    it "returns false if no result" do
+      @netid.should_receive(:run_remote_command).and_return("user Unknown")
+      @netid.check_for_localhome.should be_false
+    end
+
   end
 
   context "#check_webtype" do
