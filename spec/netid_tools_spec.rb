@@ -26,13 +26,13 @@ describe Netid do
       @netid.should respond_to :systems
       @netid.systems.should respond_to :size
     end
-    it "responds to #staff_host" do
-      @netid.should respond_to :staff_host
-      @netid.staff_host.should_not be_nil
+    it "responds to #primary_host" do
+      @netid.should respond_to :primary_host
+      @netid.primary_host.should_not be_nil
     end
-    it "responds to #student_host" do
-      @netid.should respond_to :student_host
-      @netid.student_host.should_not be_nil
+    it "responds to #secondary_host" do
+      @netid.should respond_to :secondary_host
+      @netid.secondary_host.should_not be_nil
     end
     it "requires a NetID to be initialized" do
       expect do
@@ -163,9 +163,13 @@ describe Netid do
   end
 
   context "#check_quota" do
-    it "returns an array of results on success" do
+    it "returns an object of results on success" do
+      # mock_system_response("")
+      @netid.check_quota
     end
-    it "has the first line of result be headings" do
+    it "returns false upon failure" do
+    end
+    it "return object has and responds to #response" do
     end
     it "will insert 'n/a' into 5th element if blank" do
     end

@@ -4,13 +4,14 @@ require 'netid-validator'
 require 'system-connect'
 require 'generic-response'
 require 'unix-processes'
+require 'quota-response'
 
 class Netid
   include SystemConnect
 
-  attr_accessor :netid, :system_user, :systems, :staff_host, :student_host
+  attr_accessor :netid, :system_user, :systems, :primary_host, :secondary_host
 
-  def initialize(netid,system_user=nil,systems=nil,staff_host=nil,student_host=nil)
+  def initialize(netid,system_user=nil,systems=nil,primary_host=nil,secondary_host=nil)
     @netid = netid
     @system_user = system_user || `whoami`.chomp
     @systems = systems || ["ovid01.u.washington.edu",
@@ -18,8 +19,8 @@ class Netid
                            "ovid03.u.washington.edu",
                            "vergil.u.washington.edu"
                            ]
-    @staff_host = staff_host || "ovid02.u.washington.edu"
-    @student_host = student_host || "vergil.u.washington.edu"
+    @primary_host = primary_host || "ovid02.u.washington.edu"
+    @secondary_host = secondary_host || "vergil.u.washington.edu"
   end
 
   def validate_netid
@@ -84,7 +85,7 @@ class Netid
   end
 
   def check_for_localhome
-    result = run_remote_command("cpw -poh #{netid}",staff_host)
+    result = run_remote_command("cpw -poh #{netid}",primary_host)
     if result =~ /Unknown/
       false
     else
@@ -95,9 +96,9 @@ class Netid
   def check_webtype
     result = []
     command = "webtype -user #{netid}"
-    result = run_remote_command(command,staff_host).chomp.split
+    result = run_remote_command(command,primary_host).chomp.split
     if result[0] == "user"
-      result = run_remote_command(command,student_host).chomp.split
+      result = run_remote_command(command,secondary_host).chomp.split
     else
       result
     end
@@ -105,26 +106,56 @@ class Netid
 
 
   def check_quota
-    result = run_remote_command("quota #{netid}",staff_host)
-    result = result.chomp.split("\n")
-    result.delete_at(0) if result.first == ''
-    uid = /uid\s(\d+)/.match(result.first)[1].to_i
-    result.delete_at(0)
 
-    headings = process_quota_headers(result)
+    command_result = run_remote_command("quota #{netid}",primary_host)
 
-    results = []
-    results << headings
-    result.each do |line|
-      line = line.split
-      line.insert(4, 'n/a') if line.size == 6
+    if command_result =~ /unknown user/
+      result = GenericResponse.new
+      result.error = "Unknown User #{netid} on #{primary_host}"
+      result.response = false
+    else
+      result = QuotaResponse.new
 
-      expand_cluster_path(line)
+      command_result = command_result.chomp.split
+      command_result.delete_at(0) if command_result.first? == ""
+      command_result.delete_at(0) # remove uid line
 
-      results << line
+      result.headers = process_quota_headers(command_result)
+
+      result.response << command_result.map do |line|
+        line = line.split
+        line.insert(4, 'n/a') if line.size == 6
+      end
     end
-    results
+    result
   end
+
+
+
+
+
+
+
+
+    # command_result = command_result.chomp.split("\n")
+    # command_result.delete_at(0) if command_result.first == ''
+    # # uid = /uid\s(\d+)/.match(command_result.first)[1].to_i
+    # command_result.delete_at(0)
+
+    # headings = process_quota_headers(command_result)
+
+    # command = []
+    # command << headings
+    # command_result.each do |line|
+    #   line = line.split
+    #   line.insert(4, 'n/a') if line.size == 6
+
+    #   expand_cluster_path(line)
+
+    #   results << line
+    # end
+    # results
+  # end
 
   private
     def remove_extra_processes(processes)
@@ -154,11 +185,11 @@ class Netid
     end
 
     def get_user_clusters
-      if user_clusters
-        user_clusters
+      if @user_clusters
+        @user_clusters
       else
         command = "gpw -D #{netid} | sed '1d' | sed 'N;$!P;$!D;$d' | sort | uniq"
-        run_remote_command(command,staff_host).split("\n").map do |line|
+        @user_clusters = run_remote_command(command,primary_host).map do |line|
           line.chomp
         end
       end
