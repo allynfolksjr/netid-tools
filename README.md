@@ -143,6 +143,10 @@ The NetID you want to check
 Version History
 ===============
 
+## 0.6.1
+
+* Remove nokogiri dependency
+
 ## 0.6.0
 
 * Add tests; refactor various methods

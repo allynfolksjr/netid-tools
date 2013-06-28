@@ -33,7 +33,7 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-task :default => :test
+task :default => :spec
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|

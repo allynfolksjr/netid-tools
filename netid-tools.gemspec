@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nikky Southerland"]
-  s.date = "2013-06-27"
+  s.date = "2013-06-28"
   s.description = "Gem with various methods to support UW NetIDs"
   s.email = "nikky@uw.edu"
   s.executables = ["ua_check"]
@@ -46,43 +46,34 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<nokogiri>, [">= 0"])
       s.add_runtime_dependency(%q<colored>, [">= 0"])
       s.add_runtime_dependency(%q<net-ssh>, [">= 0"])
       s.add_runtime_dependency(%q<terminal-table>, [">= 0"])
       s.add_runtime_dependency(%q<rspec>, [">= 0"])
-      s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_development_dependency(%q<bundler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
-      s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_runtime_dependency(%q<nokogiri>, [">= 0"])
       s.add_runtime_dependency(%q<colored>, [">= 0"])
     else
-      s.add_dependency(%q<nokogiri>, [">= 0"])
       s.add_dependency(%q<colored>, [">= 0"])
       s.add_dependency(%q<net-ssh>, [">= 0"])
       s.add_dependency(%q<terminal-table>, [">= 0"])
       s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<bundler>, [">= 0"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
-      s.add_dependency(%q<simplecov>, [">= 0"])
       s.add_dependency(%q<nokogiri>, [">= 0"])
       s.add_dependency(%q<colored>, [">= 0"])
     end
   else
-    s.add_dependency(%q<nokogiri>, [">= 0"])
     s.add_dependency(%q<colored>, [">= 0"])
     s.add_dependency(%q<net-ssh>, [">= 0"])
     s.add_dependency(%q<terminal-table>, [">= 0"])
     s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
     s.add_dependency(%q<bundler>, [">= 0"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
-    s.add_dependency(%q<simplecov>, [">= 0"])
     s.add_dependency(%q<nokogiri>, [">= 0"])
     s.add_dependency(%q<colored>, [">= 0"])
   end
