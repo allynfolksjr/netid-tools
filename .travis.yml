@@ -6,4 +6,4 @@ notifications:
   email:
     on_success: change
     on_failure: always
-  irc: "chat.freenode.net#nikky_build"
+  irc: "irc.efnet.net#nikky_build"
