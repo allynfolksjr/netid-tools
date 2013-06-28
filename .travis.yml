@@ -1,4 +1,9 @@
 language: ruby
 rvm:
   - 1.9
-  - 2.0 
+  - 2.0
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+  irc: "chat.freenode.net#nikky_build"
