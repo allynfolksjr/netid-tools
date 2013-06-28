@@ -163,7 +163,7 @@ class Netid
         @user_clusters
       else
         command = "gpw -D #{netid} | sed '1d' | sed 'N;$!P;$!D;$d' | sort | uniq"
-        @user_clusters = run_remote_command(command,primary_host).map do |line|
+        @user_clusters = run_remote_command(command,primary_host).split.map do |line|
           line.chomp
         end
       end

@@ -145,9 +145,12 @@ The NetID you want to check
 Version History
 ===============
 
+## 0.6.2
+
+* Fix executable
+
 ## 0.6.1
 
-* Remove nokogiri dependency
 * Add TravisCI
 
 ## 0.6.0

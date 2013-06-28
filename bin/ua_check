@@ -88,10 +88,10 @@ user.each do |netid|
   unless options[:concise]
     puts "\n"
     raw_quota = checkr.check_quota
-    headers = raw_quota.rotate!.pop
+    headers = raw_quota.headers
     table = Terminal::Table.new do |t|
       t.headings = headers
-      raw_quota.each do |line|
+      raw_quota.response.each do |line|
         if line[1].to_f > line[2].to_f
           line[1] = "#{line[1]} (Over Quota!)"
         end
