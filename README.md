@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/allynfolksjr/netid-tools.png)](https://travis-ci.org/allynfolksjr/netid-tools)
+
 NetID Tools
 ===========
 
@@ -146,6 +148,7 @@ Version History
 ## 0.6.1
 
 * Remove nokogiri dependency
+* Add TravisCI
 
 ## 0.6.0
 
