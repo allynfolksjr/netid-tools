@@ -145,6 +145,10 @@ The NetID you want to check
 Version History
 ===============
 
+## 0.6.3
+
+* Spec fix
+
 ## 0.6.2
 
 * Fix executable
