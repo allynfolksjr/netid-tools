@@ -46,6 +46,11 @@ class Netid
     end
   end
 
+  # Experimental feature
+  def pre_load_ssh(*hosts)
+    threaded_connect(system_user,*hosts)
+  end
+
   def get_processes(host)
     if /no such user/i =~ run_remote_command("id #{netid}",host)
       result = false
@@ -69,19 +74,6 @@ class Netid
       end
       refined_processes
     end
-
-
-    # if /no such user/i =~ run_remote_command("id #{netid}",host)
-    #   result = nil
-    # else
-    #   result = run_remote_command("ps -F --user=#{netid}",host).lines.map{|l| l.chomp}
-    #   result = remove_extra_processes(result)
-    # end
-    # if result.nil? || result.count == 1
-    #   false
-    # else
-    #   result
-    # end
   end
 
   def check_for_localhome

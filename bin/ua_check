@@ -46,6 +46,7 @@ user.each do |netid|
   puts "-"*netid.length
   results = 0
   checkr = Netid.new(netid,system_user)
+  checkr.pre_load_ssh(*hosts)
   hosts.each do |host|
     result = checkr.check_for_mysql_presence(host)
     if result

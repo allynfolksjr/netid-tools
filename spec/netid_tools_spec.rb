@@ -208,4 +208,5 @@ describe Netid do
       @netid.check_quota.response.should eq [%w(/cg32 usage quota limit n/a files limit), %w(/hw00/w00/ferp usage quota limit grace files limit)]
     end
   end
+
 end

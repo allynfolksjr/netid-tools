@@ -6,6 +6,21 @@ module SystemConnect
     Net::SSH.start(host,user,{auth_methods: %w(publickey)})
   end
 
+  def threaded_connect(user,*hosts)
+    @connections ||= []
+    connection_objects = []
+    threads = []
+    hosts.each do |host|
+      threads << Thread.new do
+        @connections << SystemSSH.new(host,connect(host,user))
+      end
+    end
+    threads.each do |thr|
+      thr.join
+    end
+  end
+
+
   def run_remote_command(command, host)
     connection = find_connection_for_host(host)
     connection.exec!(command)
