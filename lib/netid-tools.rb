@@ -56,7 +56,7 @@ class Netid
       refined_processes = UnixProcesses.new(host)
 
       refined_processes.headers = raw_processes[0].split
-      raw_processes.delete_at(0)
+      raw_processes.shift
 
       refined_processes.processes = raw_processes.map do |line|
         line = line.split
@@ -117,8 +117,11 @@ class Netid
       result = QuotaResponse.new
 
       command_result = command_result.chomp.split("\n")
-      command_result.delete_at(0) if command_result.first == ""
-      command_result.delete_at(0) # remove uid line
+      if command_result.first == ""
+        command_result.shift(2)
+      else
+        command_result.shift
+      end
 
       result.headers = process_quota_headers(command_result)
       result.response = command_result.map do |line|
@@ -140,7 +143,7 @@ class Netid
 
     def process_quota_headers(quota_results)
       headings = quota_results.first.split
-      quota_results.delete_at(0)
+      quota_results.shift
       headings
     end
 
@@ -168,5 +171,4 @@ class Netid
         end
       end
     end
-
 end
