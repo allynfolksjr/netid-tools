@@ -2,23 +2,34 @@ module SystemConnect
 
   private
 
+  def connections
+    unless @connections
+      @connections = []
+    end
+    @connections
+  end
+
+  def connections=(var)
+    @connections = var
+  end
+
   def connect(host,user)
     Net::SSH.start(host,user,{auth_methods: %w(publickey)})
   end
 
   def threaded_connect(user,*hosts)
-    @connections ||= []
     connection_objects = []
     threads = []
     hosts.each do |host|
       threads << Thread.new do
-        @connections << SystemSSH.new(host,connect(host,user))
+        connections << SystemSSH.new(host,connect(host,user))
       end
     end
     threads.each do |thr|
       thr.join
     end
   end
+
 
 
   def run_remote_command(command, host)
@@ -43,9 +54,8 @@ module SystemConnect
   end
 
   def find_connection_for_host(host)
-    @connections ||= []
-    unless @connections.select{ |conn| conn.hostname == host}.empty?
-      @connections.select{ |conn| conn.hostname == host}.first.connection_object
+    unless connections.select{ |conn| conn.hostname == host}.empty?
+      connections.select{ |conn| conn.hostname == host}.first.connection_object
     else
       lazy_load_connection_for_host(host)
       find_connection_for_host(host)
