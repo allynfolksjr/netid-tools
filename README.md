@@ -145,90 +145,97 @@ The NetID you want to check
 Version History
 ===============
 
-## 0.6.3
+### 0.7.0
+
+* [API] Convert netid-tools to use hash for initialization
+* [API] Switch to response objects for all methods
+* [Improvement/Experimental] Add ability to pre-load connections. See commit e328e1 for more details
+
+
+### 0.6.3
 
 * Spec fix
 
-## 0.6.2
+### 0.6.2
 
 * Fix executable
 
-## 0.6.1
+### 0.6.1
 
 * Add TravisCI
 
-## 0.6.0
+### 0.6.0
 
 * Add tests; refactor various methods
 * Switch more commands to use Response objects rather than bare responses. Documentation pending.
 
-## 0.5.5
+### 0.5.5
 
 * Switch process listing to individual class
 
-## 0.5.4
+### 0.5.4
 
 * Switch table formatting on ua_check binary
 
-## 0.5.3
+### 0.5.3
 
 * Remove debug function
 
-## 0.5.2
+### 0.5.2
 
 * Expand cluster paths if available in quota output
 
-## 0.5.0
+### 0.5.0
 
 * Switch to new SSH connection method; reuse already existing SSH connection for host if it exists
 * Tighten up code
 * Fix bugs
 
-## 0.4.2
+### 0.4.2
 
 * Rename check_quota -> quota_check
 
-## 0.4.0
+### 0.4.0
 
 * Switch most methods from Class->Instance
 
-## 0.3.10
+### 0.3.10
 
 * Add -p flag for full process check on hosts.
 
-## 0.3.9
+### 0.3.9
 
 * Add webtype check to list of returned results in ua_check executable
 * Add Netid.check_webtype method
 
-## 0.3.8
+### 0.3.8
 
 * Remove ovid21.u.washington.edu from host list; retired system
 
-## 0.3.7
+### 0.3.7
 
 * Allow validate_netid? to return true for NetIDs that have a hyphen in them
 
-## 0.3.6
+### 0.3.6
 
 * Add concise mode via -c flag to ua_check (skips quota results)
 * Add OptionParser to ua_check
 * Tweak formatting for results
 * Allow multiple lookups per execption
 
-## 0.3.3
+### 0.3.3
 
 * Fix broken code so that it properly displays localhome
 
-## 0.3.2
+### 0.3.2
 
 * Added install notes
 
-## 0.3.1
+### 0.3.1
 
 * Initial documented release
 * Swich to Apache License
 
-## 0.3.0
+### 0.3.0
 
 Initial release
