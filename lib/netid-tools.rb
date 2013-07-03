@@ -11,16 +11,23 @@ class Netid
 
   attr_accessor :netid, :system_user, :systems, :primary_host, :secondary_host
 
-  def initialize(netid,system_user=nil,systems=nil,primary_host=nil,secondary_host=nil)
-    @netid = netid
-    @system_user = system_user || `whoami`.chomp
-    @systems = systems || ["ovid01.u.washington.edu",
+  def initialize(options)
+
+    if options[:netid]
+      @netid = options[:netid]
+    else
+      raise "NetID required in options hash."
+    end
+
+    @system_user = options[:system_user] || `whoami`.chomp
+    @systems = options[:systems] || ["ovid01.u.washington.edu",
                            "ovid02.u.washington.edu",
                            "ovid03.u.washington.edu",
                            "vergil.u.washington.edu"
                            ]
-    @primary_host = primary_host || "ovid02.u.washington.edu"
-    @secondary_host = secondary_host || "vergil.u.washington.edu"
+    @primary_host = options[:primary_host] || "ovid02.u.washington.edu"
+    @secondary_host = options[:secondary_host] || "vergil.u.washington.edu"
+
   end
 
   def validate_netid

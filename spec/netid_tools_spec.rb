@@ -10,10 +10,38 @@ describe Netid do
   end
 
   before do
-    @netid = Netid.new('test')
+    @netid = Netid.new({netid:'test'})
   end
 
   context "sanity checks" do
+    it "raises on two or more arguments" do
+      expect do
+        Netid.new('doop','derp')
+      end.to raise_error
+    end
+    it "expects an options hash" do
+      Netid.new({netid: 'nikky'}).netid.should eq 'nikky'
+    end
+    it "requires a NetID in hash" do
+      expect do
+        Netid.new({system_user: 'derp'})
+      end.to raise_error
+    end
+    it "knows about the usual options" do
+      full_object = Netid.new({
+        netid: 'netid2',
+        system_user: 'bob',
+        systems: %w(sylvan.uw.edu),
+        primary_host: 'hiigara.cac',
+        secondary_host: 'uvb76.cac'
+      })
+
+      full_object.netid.should eq 'netid2'
+      full_object.system_user.should eq 'bob'
+      full_object.systems.should eq ["sylvan.uw.edu"]
+      full_object.primary_host.should eq "hiigara.cac"
+      full_object.secondary_host.should eq "uvb76.cac"
+    end
     it "responds to #netid" do
       @netid.should respond_to :netid
       @netid.netid.should eq 'test'
@@ -47,10 +75,10 @@ describe Netid do
       @netid.validate_netid.response.should eq true
     end
     it "returns a GenericResponse of false on invalid netid" do
-      Netid.new('123test').validate_netid.response.should be_false
+      Netid.new({netid:'123test'}).validate_netid.response.should be_false
     end
     it "returns a GenericResponse with error message on invalid netid" do
-      Netid.new('123test').validate_netid.error.should eq "Not a valid NetID"
+      Netid.new({netid:'123test'}).validate_netid.error.should eq "Not a valid NetID"
     end
   end
 
@@ -59,10 +87,10 @@ describe Netid do
       @netid.validate_netid?.should be_true
     end
     it "returns false on NetID that starts with number" do
-      Netid.new('123test').validate_netid?.should be_false
+      Netid.new({netid:'123test'}).validate_netid?.should be_false
     end
     it "returns false on NetID that is too long" do
-      Netid.new('abcdefghijklmnop').validate_netid?.should be_false
+      Netid.new({netid:'abcdefghijklmnop'}).validate_netid?.should be_false
     end
   end
 
