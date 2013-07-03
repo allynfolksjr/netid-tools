@@ -28,6 +28,8 @@ class Netid
     @primary_host = options[:primary_host] || "ovid02.u.washington.edu"
     @secondary_host = options[:secondary_host] || "vergil.u.washington.edu"
 
+    @debug = options[:debug] || false
+
   end
 
   def validate_netid

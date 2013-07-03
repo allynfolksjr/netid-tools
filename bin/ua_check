@@ -45,24 +45,24 @@ user.each do |netid|
   puts "#{netid}".bold.green
   puts "-"*netid.length
   results = 0
-  checkr = Netid.new(netid,system_user)
+  checkr = Netid.new({netid: netid,system_user:system_user})
   checkr.pre_load_ssh(*hosts)
   hosts.each do |host|
     result = checkr.check_for_mysql_presence(host)
-    if result
+    if result.response
       results += 1
-      puts "MySQLd detected on #{result[0]}:#{result[1]}".blue
+      puts "MySQLd detected on #{result.response[0]}:#{result.response[1]}".blue
     end
   end
 
   result = checkr.check_for_localhome
   if result
-    puts "Localhome: #{result}".cyan
+    puts "Localhome: #{result.response}".cyan
   else
     puts "No localhome detected"
   end
 
-  puts "Webtypes set: #{checkr.check_webtype}"
+  puts "Webtypes set: #{checkr.check_webtype.response}"
 
   puts "No MySQLds Detected".bold.blue if results == 0
 
