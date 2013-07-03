@@ -36,14 +36,17 @@ class Netid
   end
 
   def check_for_mysql_presence(host)
+    response = GenericResponse.new
     command = "ps -F -U #{netid} -u #{netid}"
     result = run_remote_command(command,host)
     if result =~ /mysql/
       /port=(?<port>\d+)/ =~ result
-      [host,port.to_i]
+      response.response = [host,port.to_i]
+      response
     else
-      false
+      response.response = false
     end
+    response
   end
 
   # Experimental feature
@@ -53,7 +56,9 @@ class Netid
 
   def get_processes(host)
     if /no such user/i =~ run_remote_command("id #{netid}",host)
-      result = false
+      result = GenericResponse.new
+      result.response = false
+      result
     else
 
       command = "ps -o pid,user,cputime,nice,wchan,pcpu,pmem,rss,start_time,cmd --user #{netid}"
@@ -77,23 +82,27 @@ class Netid
   end
 
   def check_for_localhome
+    response = GenericResponse.new
     result = run_remote_command("cpw -poh #{netid}",primary_host)
     if result =~ /Unknown/
-      false
+      response.response = false
     else
-      result.chomp
+      response.response = result.chomp
     end
+    response
   end
 
   def check_webtype
-    result = []
+    response = GenericResponse.new
     command = "webtype -user #{netid}"
-    result = run_remote_command(command,primary_host).chomp.split
-    if result[0] == "user"
-      result = run_remote_command(command,secondary_host).chomp.split
+    command_result = run_remote_command(command,primary_host).chomp
+    if command_result =~ /user/
+      response.response = run_remote_command(command,secondary_host).chomp.split
     else
-      result
+      response.response = command_result.chomp.split
     end
+    response.response = false if response.response.empty?
+    response
   end
 
 

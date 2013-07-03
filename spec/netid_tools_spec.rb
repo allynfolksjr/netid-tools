@@ -85,18 +85,18 @@ describe Netid do
       --pid-file=/da23/d38/nikky/mysql/data/ovid02.u.washington.edu.pid
       --socket=/da23/d38/nikky/mysql.sock --port=5280"
       mock_system_response(valid_return)
-      @netid.check_for_mysql_presence('fake.example.com').should eq ['fake.example.com', 5280]
+      @netid.check_for_mysql_presence('fake.example.com').response.should eq ['fake.example.com', 5280]
     end
     it "returns false with no valid result" do
       mock_system_response("")
-      @netid.check_for_mysql_presence('fake.example.com').should be_false
+      @netid.check_for_mysql_presence('fake.example.com').response.should be_false
     end
   end
 
   context "#get_processes" do
     it "returns false if a user is not detected" do
       mock_system_response("no such user")
-      @netid.get_processes('example.com').should be_false
+      @netid.get_processes('example.com').response.should be_false
     end
     it "returns a UnixProcesses object on success" do
       mock_system_response("exists","1\n2\n3")
@@ -134,30 +134,30 @@ describe Netid do
   context "#check_for_localhome" do
     it "returns the localhome location upon success" do
       mock_system_response("/ov03/dw21/derp")
-      @netid.check_for_localhome.should eq ("/ov03/dw21/derp")
+      @netid.check_for_localhome.response.should eq ("/ov03/dw21/derp")
     end
     it "returns false if no result" do
       mock_system_response("user Unknown")
-      @netid.check_for_localhome.should be_false
+      @netid.check_for_localhome.response.should be_false
     end
   end
 
   context "#check_webtype" do
     it "returns array of webtypes upon success" do
       mock_system_response("depts\ncourses")
-      @netid.check_webtype.should eq %w(depts courses)
+      @netid.check_webtype.response.should eq %w(depts courses)
     end
-    it "returns empty array if no webtypes found" do
+    it "returns false if no webtypes found" do
       mock_system_response("")
-      @netid.check_webtype.should be_empty
+      @netid.check_webtype.response.should be_false
     end
     it "tries alternate host if primary returns no user found" do
       mock_system_response("user Unknown","depts\ncourses")
-      @netid.check_webtype.should eq %w(depts courses)
+      @netid.check_webtype.response.should eq %w(depts courses)
     end
     it "returns empty array if no webtypes found on alternate host" do
       mock_system_response("user Unknown","")
-      @netid.check_webtype.should eq %w()
+      @netid.check_webtype.response.should be_false
     end
 
   end
