@@ -69,11 +69,11 @@ user.each do |netid|
   if options[:processes]
     hosts.each do |host|
       processes = checkr.get_processes(host)
-      if processes
+      if processes.response
         table = Terminal::Table.new do |t|
           t.title = host
           t.headings = processes.headers
-          processes.processes.each do |p|
+          processes.response.each do |p|
             if p[9].length > 80
               p[9].slice!(80,p[9].length-80)
             end
@@ -82,7 +82,7 @@ user.each do |netid|
         end
 
       end
-      puts table
+      puts table if processes.response
     end
   end
 

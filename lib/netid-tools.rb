@@ -21,42 +21,42 @@ class Netid
 
     @system_user = options[:system_user] || `whoami`.chomp
     @systems = options[:systems] || ["ovid01.u.washington.edu",
-                           "ovid02.u.washington.edu",
-                           "ovid03.u.washington.edu",
-                           "vergil.u.washington.edu"
-                           ]
-    @primary_host = options[:primary_host] || "ovid02.u.washington.edu"
-    @secondary_host = options[:secondary_host] || "vergil.u.washington.edu"
+     "ovid02.u.washington.edu",
+     "ovid03.u.washington.edu",
+     "vergil.u.washington.edu"
+   ]
+   @primary_host = options[:primary_host] || "ovid02.u.washington.edu"
+   @secondary_host = options[:secondary_host] || "vergil.u.washington.edu"
 
-    @debug = options[:debug] || false
+   @debug = options[:debug] || false
 
-  end
+ end
 
-  def validate_netid
-    NetidValidator.do(netid)
-  end
+ def validate_netid
+  NetidValidator.do(netid)
+end
 
-  def self.validate_netid?(netid)
-    NetidValidator.do(netid).response
-  end
+def self.validate_netid?(netid)
+  NetidValidator.do(netid).response
+end
 
-  def validate_netid?
-    NetidValidator.do(netid).response
-  end
+def validate_netid?
+  NetidValidator.do(netid).response
+end
 
-  def check_for_mysql_presence(host)
-    response = GenericResponse.new
-    command = "ps -F -U #{netid} -u #{netid}"
-    result = run_remote_command(command,host)
-    if result =~ /mysql/
-      /port=(?<port>\d+)/ =~ result
-      response.response = [host,port.to_i]
-      response
-    else
-      response.response = false
-    end
+def check_for_mysql_presence(host)
+  response = GenericResponse.new
+  command = "ps -F -U #{netid} -u #{netid}"
+  result = run_remote_command(command,host)
+  if result =~ /mysql/
+    /port=(?<port>\d+)/ =~ result
+    response.response = [host,port.to_i]
     response
+  else
+    response.response = false
   end
+  response
+end
 
   # Experimental feature
   def pre_load_ssh(*hosts)
@@ -77,7 +77,7 @@ class Netid
       refined_processes.headers = raw_processes[0].split
       raw_processes.shift
 
-      refined_processes.processes = raw_processes.map do |line|
+      refined_processes.response = raw_processes.map do |line|
         line = line.split
 
         if line.size > 9
@@ -86,7 +86,13 @@ class Netid
         end
         line
       end
-      refined_processes
+      if refined_processes.response.empty?
+        result = GenericResponse.new
+        result.response = false
+        result
+      else
+        refined_processes
+      end
     end
   end
 
@@ -145,40 +151,40 @@ class Netid
   end
 
   private
-    def remove_extra_processes(processes)
-      processes.select do |line|
-        line !~ /ps -F --user|ssh(d:|-agent)|bash|zsh/
+  def remove_extra_processes(processes)
+    processes.select do |line|
+      line !~ /ps -F --user|ssh(d:|-agent)|bash|zsh/
+    end
+  end
+
+  def process_quota_headers(quota_results)
+    headings = quota_results.first.split
+    quota_results.shift
+    headings
+  end
+
+  def expand_cluster_path(line)
+    clusters = get_user_clusters
+
+    asking_cluster_string = line.first
+
+    search = clusters.find_index do |c|
+      c =~ /#{asking_cluster_string}/
+    end
+
+    line[0] = clusters[search] if search
+
+    line
+  end
+
+  def get_user_clusters
+    if @user_clusters
+      @user_clusters
+    else
+      command = "gpw -D #{netid} | sed '1d' | sed 'N;$!P;$!D;$d' | sort | uniq"
+      @user_clusters = run_remote_command(command,primary_host).split.map do |line|
+        line.chomp
       end
     end
-
-    def process_quota_headers(quota_results)
-      headings = quota_results.first.split
-      quota_results.shift
-      headings
-    end
-
-    def expand_cluster_path(line)
-      clusters = get_user_clusters
-
-      asking_cluster_string = line.first
-
-      search = clusters.find_index do |c|
-        c =~ /#{asking_cluster_string}/
-      end
-
-      line[0] = clusters[search] if search
-
-      line
-    end
-
-    def get_user_clusters
-      if @user_clusters
-        @user_clusters
-      else
-        command = "gpw -D #{netid} | sed '1d' | sed 'N;$!P;$!D;$d' | sort | uniq"
-        @user_clusters = run_remote_command(command,primary_host).split.map do |line|
-          line.chomp
-        end
-      end
-    end
+  end
 end
