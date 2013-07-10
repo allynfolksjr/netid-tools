@@ -136,26 +136,26 @@ describe Netid do
     end
     it "properly merges commnds with spaces into one array element" do
       mock_system_response("exists","a b c\n1 2 3 4 5 6 7 8 9 command with space\n2")
-      @netid.get_processes('example.com').processes.first[9].should eq "command with space"
+      @netid.get_processes('example.com').response.first[9].should eq "command with space"
     end
     it "properly handles commnds without spaces" do
       mock_system_response("exists","a b c\n1 2 3 4 5 6 7 8 9 command_without_space\n2")
-      @netid.get_processes('example.com').processes.first[9].should eq "command_without_space"
+      @netid.get_processes('example.com').response.first[9].should eq "command_without_space"
     end
     it "doesn't contain newlines" do
       mock_system_response("exists","1\n2\n3")
-      @netid.get_processes('example.com').processes.select{|s| s =~ /\/n/}.should be_empty
+      @netid.get_processes('example.com').response.select{|s| s =~ /\/n/}.should be_empty
     end
-    it "doesn't contain headers in main processes object" do
+    it "doesn't contain headers in main results method" do
       mock_system_response("exists","headers pid guid\n1 2 3 4 5 6 7 8 9 command with space\n2")
       return_obj = @netid.get_processes('example.com')
       return_obj.headers.should eq %w(headers pid guid)
-      return_obj.processes.should_not include %w(headers pid guid)
+      return_obj.response.should_not include %w(headers pid guid)
     end
     it "has processes which responds to .each" do
       mock_system_response("exists","headers pid guid\n1 2 3 4 5 6 7 8 9 command with space\n2")
       return_obj = @netid.get_processes('example.com')
-      return_obj.processes.should respond_to(:each)
+      return_obj.response.should respond_to(:each)
     end
   end
 
