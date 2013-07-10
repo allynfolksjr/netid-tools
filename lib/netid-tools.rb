@@ -22,8 +22,7 @@ class Netid
     @system_user = options[:system_user] || `whoami`.chomp
     @systems = options[:systems] || ["ovid01.u.washington.edu",
      "ovid02.u.washington.edu",
-     "ovid03.u.washington.edu",
-     "vergil.u.washington.edu"
+     "ovid03.u.washington.edu"
    ]
    @primary_host = options[:primary_host] || "ovid02.u.washington.edu"
    @secondary_host = options[:secondary_host] || "vergil.u.washington.edu"

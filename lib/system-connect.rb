@@ -14,19 +14,29 @@ module SystemConnect
   end
 
   def connect(host,user)
-    Net::SSH.start(host,user,{auth_methods: %w(publickey)})
+    begin
+      Net::SSH.start(host,user,{auth_methods: %w(publickey)})
+    rescue
+      puts "Connection failed for #{user}@#{host}"
+      exit 2
+    end
+
   end
 
   def threaded_connect(user,*hosts)
-    connection_objects = []
     threads = []
     hosts.each do |host|
       threads << Thread.new do
-        connections << SystemSSH.new(host,connect(host,user))
+        Thread.current[:name] = host
+          connection = SystemSSH.new(host,connect(host,user))
+          connections << connection unless connection.connection_object.nil?
       end
     end
     threads.each do |thr|
-      thr.join
+      if thr.join(4).nil?
+        puts "Threaded connect failed for #{user}@#{thr[:name]}"
+        exit 2
+      end
     end
   end
 
